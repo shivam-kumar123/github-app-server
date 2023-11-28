@@ -16,8 +16,8 @@ app.use(bodyParser.json());
 
 app.post('/webhook', (req, res) => {
     console.log('req', req);
-    console.log('payload', req.payload);
-    console.log('webhook called sucessfully');
+    console.log('payload', req.body);
+    console.log('webhook called sucessfully.');
 //   const event = req.headers['x-github-event'];
 //   const signature = req.headers['x-hub-signature'];
 
