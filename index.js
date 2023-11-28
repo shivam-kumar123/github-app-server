@@ -26,7 +26,7 @@ app.post('/webhook', (req, res) => {
 //     return res.status(403).send('Invalid signature');
 //   }
 
-//   // Handle pull request events
+//   Handle pull request events
 //   if (event === 'pull_request' && req.body.action === 'opened') {
 //     const pullRequest = req.body.pull_request;
 //     console.log('New pull request created:', pullRequest.title);
