@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const http = require('http');
 const socketIo = require('socket.io');
+const axios = require('axios'); // Add axios for making HTTP requests
 const dotenv = require('dotenv');
 
 const app = express();
@@ -22,7 +23,7 @@ app.use(bodyParser.json());
 app.post('/webhook', (req, res) => {
   const payload = req.body;
   console.log('Payload:', payload);
-  console.log('Webhook called successfully..');
+  console.log('Webhook called successfully.');
 
   // Emit a WebSocket event to all connected clients
   io.emit('webhookEvent', payload);
@@ -30,8 +31,50 @@ app.post('/webhook', (req, res) => {
   res.status(200).send('Webhook received successfully');
 });
 
-app.get('/', (req, res) => {
-  res.status(200).send('Webhook received successfully');
+// New endpoint to fetch repositories after login
+app.get('/fetch-repos', async (req, res) => {
+  try {
+    const response = await axios.get('https://api.github.com/user/repos', {
+      headers: {
+        Authorization: `Bearer YOUR_PERSONAL_ACCESS_TOKEN` // Replace with your personal access token
+      }
+    });
+
+    const repos = response.data.map(repo => repo.full_name);
+    res.status(200).json({ repos });
+  } catch (error) {
+    console.error('Error fetching repositories:', error.message);
+    res.status(500).send('Error fetching repositories');
+  }
+});
+
+// New endpoint to create webhooks for all repositories
+app.post('/create-webhooks', async (req, res) => {
+  const { repos } = req.body;
+
+  try {
+    for (const repo of repos) {
+      await axios.post(`https://api.github.com/repos/${repo}/hooks`, {
+        name: 'web',
+        active: true,
+        events: ['push'],
+        config: {
+          url: 'https://github-app-server.onrender.com/webhook', // Replace with your server URL
+          content_type: 'json',
+        },
+      }, {
+        headers: {
+          Authorization: process.env.GITHUB_TOKEN // Replace with your personal access token
+        }
+      });
+      console.log(`Webhook created for repository: ${repo}`);
+    }
+
+    res.status(200).send('Webhooks created successfully');
+  } catch (error) {
+    console.error('Error creating webhooks:', error.message);
+    res.status(500).send('Error creating webhooks');
+  }
 });
 
 server.listen(port, () => {
