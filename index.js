@@ -20,6 +20,8 @@ dotenv.config();
 app.use(cors());
 app.use(bodyParser.json());
 
+let GITHUB_TOKEN;
+
 app.post('/webhook', (req, res) => {
   const payload = req.body;
   console.log('Payload:', payload);
@@ -75,6 +77,13 @@ app.post('/create-webhooks', async (req, res) => {
     console.error('Error creating webhooks:', error.message);
     res.status(500).json({ error: 'Error creating webhooks' });
   }
+});
+
+app.post('/', (req, res) => {
+    GITHUB_TOKEN = req.body.githubToken;
+    console.log('sending github token from server to client');
+    console.log(req.body);
+    console.log(GITHUB_TOKEN);
 });
 
 server.listen(port, () => {
