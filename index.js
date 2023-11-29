@@ -10,14 +10,14 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "*", // Adjust this to the origin of your client app
+    origin: "*", // Allow all origins for now, adjust as needed
     methods: ["GET", "POST"]
   }
 });
 const port = process.env.PORT || 3001;
 
 dotenv.config();
-app.use(cors());
+app.use(cors()); // Enable CORS for all routes
 app.use(bodyParser.json());
 
 let GITHUB_TOKEN;
@@ -38,7 +38,6 @@ app.get('/fetch-repos', async (req, res) => {
   try {
     const response = await axios.get('https://api.github.com/user/repos', {
       headers: {
-        // Authorization: `Bearer ${process.env.GITHUB_TOKEN}`
         Authorization: GITHUB_TOKEN
       }
     });
@@ -67,8 +66,7 @@ app.post('/create-webhooks', async (req, res) => {
         },
       }, {
         headers: {
-        //   Authorization: `Bearer ${process.env.GITHUB_TOKEN}`
-        Authorization: GITHUB_TOKEN
+          Authorization: GITHUB_TOKEN
         }
       });
       console.log(`Webhook created for repository: ${repo}`);
