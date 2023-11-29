@@ -10,9 +10,9 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "*", 
-    methods: ["GET", "POST"]
-  }
+    origin: '*', // Adjust this to the origin of your client app
+    methods: ['GET', 'POST'],
+  },
 });
 const port = process.env.PORT || 3001;
 
@@ -42,15 +42,13 @@ app.get('/last-notification', (req, res) => {
   res.status(200).json(lastNotification);
 });
 
-app.post('/webhook', (req, res) => {
-  const payload = req.body;
-  console.log('Payload:', payload);
-  console.log('Webhook called successfully.');
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
 
-  // Emit a WebSocket event to all connected clients
-  io.emit('webhookEvent', payload);
-
-  res.status(200).send('Webhook received successfully');
+  // Handle disconnect
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
 });
 
 server.listen(port, () => {
