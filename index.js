@@ -10,7 +10,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "*", // Allow all origins for now, adjust as needed
+    origin: "*", // Allow all origins for now
     methods: ["GET", "POST"]
   }
 });
