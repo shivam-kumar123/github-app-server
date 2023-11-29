@@ -2,12 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const http = require('http');
-const socketIo = require('socket.io'); // Import socket.io
+const socketIo = require('socket.io');
 const dotenv = require('dotenv');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server); // Initialize socket.io
+const io = socketIo(server, {
+  cors: {
+    origin: "*", // Adjust this to the origin of your client app
+    methods: ["GET", "POST"]
+  }
+});
 const port = process.env.PORT || 3001;
 
 dotenv.config();
