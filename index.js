@@ -38,7 +38,8 @@ app.get('/fetch-repos', async (req, res) => {
   try {
     const response = await axios.get('https://api.github.com/user/repos', {
       headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`
+        // Authorization: `Bearer ${process.env.GITHUB_TOKEN}`
+        Authorization: GITHUB_TOKEN
       }
     });
 
@@ -66,7 +67,8 @@ app.post('/create-webhooks', async (req, res) => {
         },
       }, {
         headers: {
-          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`
+        //   Authorization: `Bearer ${process.env.GITHUB_TOKEN}`
+        Authorization: GITHUB_TOKEN
         }
       });
       console.log(`Webhook created for repository: ${repo}`);
