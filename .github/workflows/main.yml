@@ -1,0 +1,20 @@
+name: Forward Webhooks
+
+on:
+  push:
+    branches:
+      - main  # or the branch you prefer
+
+jobs:
+  forward-webhook:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Webhook Event
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"ref": "${{ github.ref }}", "repository": ${JSON.stringify(github.repository)}}' \
+            https://github-app-server.onrender.com/webhook
+        env:
+          YOUR_APP_SERVER_URL: https://github-app-server.onrender.com
