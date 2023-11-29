@@ -3,7 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const http = require('http');
 const socketIo = require('socket.io');
-const axios = require('axios'); // Add axios for making HTTP requests
+const axios = require('axios');
 const dotenv = require('dotenv');
 
 const app = express();
@@ -31,12 +31,12 @@ app.post('/webhook', (req, res) => {
   res.status(200).send('Webhook received successfully');
 });
 
-// New endpoint to fetch repositories after login
+// Updated endpoint to fetch repositories after login
 app.get('/fetch-repos', async (req, res) => {
   try {
     const response = await axios.get('https://api.github.com/user/repos', {
       headers: {
-        Authorization: `Bearer YOUR_PERSONAL_ACCESS_TOKEN` // Replace with your personal access token
+        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`
       }
     });
 
@@ -44,7 +44,7 @@ app.get('/fetch-repos', async (req, res) => {
     res.status(200).json({ repos });
   } catch (error) {
     console.error('Error fetching repositories:', error.message);
-    res.status(500).send('Error fetching repositories');
+    res.status(500).json({ error: 'Error fetching repositories' });
   }
 });
 
@@ -64,7 +64,7 @@ app.post('/create-webhooks', async (req, res) => {
         },
       }, {
         headers: {
-          Authorization: process.env.GITHUB_TOKEN // Replace with your personal access token
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`
         }
       });
       console.log(`Webhook created for repository: ${repo}`);
@@ -73,7 +73,7 @@ app.post('/create-webhooks', async (req, res) => {
     res.status(200).send('Webhooks created successfully');
   } catch (error) {
     console.error('Error creating webhooks:', error.message);
-    res.status(500).send('Error creating webhooks');
+    res.status(500).json({ error: 'Error creating webhooks' });
   }
 });
 
