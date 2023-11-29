@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 app.post('/webhook', (req, res) => {
   const payload = req.body;
   console.log('Payload:', payload);
-  console.log('Webhook called successfully..');
+  console.log('Webhook called successfully.');
 
   // Emit a WebSocket event to all connected clients
   io.emit('webhookEvent', payload);
